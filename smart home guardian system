@@ -1,0 +1,63 @@
+// Pin Definitions
+const int ldrPin = A0;           // Analog pin for LDR
+const int irPin = 2;             // Digital pin for IR sensor
+const int ledEntrance = 3;       // Digital pin for entrance LED
+const int ledLocker = 4;         // Digital pin for locker LED
+const int buzzerEntrance = 5;    // Digital pin for entrance buzzer
+const int buzzerLocker = 6;      // Digital pin for locker buzzer
+
+// Thresholds
+const int ldrThreshold = 500;    // Adjust this value based on laser light intensity
+const int irThreshold = HIGH;    // IR sensor triggers on HIGH (or LOW based on your sensor)
+
+// Variables
+int ldrValue = 0;
+
+void setup() {
+  // Initialize pins
+  pinMode(ldrPin, INPUT);
+  pinMode(irPin, INPUT);
+  pinMode(ledEntrance, OUTPUT);
+  pinMode(ledLocker, OUTPUT);
+  pinMode(buzzerEntrance, OUTPUT);
+  pinMode(buzzerLocker, OUTPUT);
+
+  // Start Serial Monitor for debugging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Read LDR value
+  ldrValue = analogRead(ldrPin);
+
+  // Read IR sensor value
+  int irValue = digitalRead(irPin);
+
+  // Debugging
+  Serial.print("LDR Value: ");
+  Serial.print(ldrValue);
+  Serial.print(" | IR Value: ");
+  Serial.println(irValue);
+
+  // Entrance detection based on LDR
+  // Buzzer and LED turn on when laser light is NOT falling on the LDR
+  if (ldrValue > ldrThreshold) {
+    digitalWrite(ledEntrance, HIGH);   // Turn on entrance LED
+    digitalWrite(buzzerEntrance, HIGH); // Sound entrance buzzer
+  } else {
+    digitalWrite(ledEntrance, LOW);    // Turn off entrance LED
+    digitalWrite(buzzerEntrance, LOW); // Turn off entrance buzzer
+  }
+
+  // Locker detection based on IR sensor
+  if (irValue == irThreshold) {
+    digitalWrite(ledLocker, HIGH);     // Turn on locker LED
+    digitalWrite(buzzerLocker, HIGH);  // Sound locker buzzer
+  } else {
+    digitalWrite(ledLocker, LOW);      // Turn off locker LED
+    digitalWrite(buzzerLocker, LOW);   // Turn off locker buzzer
+  }
+
+  // Small delay for stability
+  delay(100);
+}
